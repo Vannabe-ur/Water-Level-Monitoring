@@ -22,7 +22,7 @@ const float Rwet = 640.0;
 // Tank and sensor parameters
 const float tankHeightCM = 100.0;
 const float sensorLength = 4.0;
-const float H_offset = 96.0;   // tankHeight - sensorLength
+const float H_offset = 94.0;   // tankHeight - TotalSensorLength = 100 - 6
 
 /* WIFI CONFIG */
 const char* ssid = "Shin Zo.";
