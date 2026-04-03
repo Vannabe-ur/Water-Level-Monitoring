@@ -15,3 +15,7 @@ Historical data logging in a database for tracking trends.
 - Home water tank monitoring.
 - Industrial fluid level tracking.
 - Smart irrigation or water management systems.
+
+### Read our paper here: 
+
+https://docs.google.com/document/d/1DuVijaKOeuzwsTbQ9hRPkm7cE5pl-aO8/edit?usp=sharing&ouid=115634637106939792285&rtpof=true&sd=true
