@@ -21,7 +21,7 @@ const float Rwet = 640.0;
 
 // Tank and sensor parameters
 const float tankHeightCM = 100.0;
-const float sensorLength = 4.0;
+const float sensorLength = 4.0; // Sensing area of sensor (cm)
 const float H_offset = 94.0;   // tankHeight - TotalSensorLength = 100 - 6
 
 /* WIFI CONFIG */
