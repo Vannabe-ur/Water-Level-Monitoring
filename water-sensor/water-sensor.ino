@@ -15,29 +15,28 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 /* ================= SENSOR CONFIG ================= */
 const int sensorPin = A0;      //  ESP8266 ONLY HAS A0
 
-// 🔧 CALIBRATION (YOU MUST SET THESE FROM SERIAL MONITOR)
-const int dryValue = 120;      // sensor value when DRY
-const int wetValue = 760;      // sensor value when FULLY WET
-const float tankHeightCM = 20.0; // max tank height (cm)
+// Calibration values
+const float Rdry = 20.0;
+const float Rwet = 640.0;
 
-/* ================= LEVEL THRESHOLDS ================= */
-const float SAFE_LEVEL = 6.0;
-const float MID_LEVEL  = 12.0;
+// Tank and sensor parameters
+const float tankHeightCM = 100.0;
+const float sensorLength = 4.0; // Sensing area of sensor (cm)
+const float H_offset = 94.0;   // tankHeight - TotalSensorLength = 100 - 6
 
-/* ================= WIFI CONFIG ================= */
-const char* ssid = "Bun Hong";
-const char* password = "67670749";
-const char* serverURL = "http://172.17.255.25/water/update.php";
+/* WIFI CONFIG */
+const char* ssid = "Shin Zo.";
+const char* password = "08072022";
+const char* serverURL = "http://10.194.208.217/water/update.php";
 
-/* ================= SETUP ================= */
+/* SETUP */
 void setup() {
-  Serial.begin(9600);
 
-  // I2C (ESP8266 default: SDA=D2, SCL=D1)
+  Serial.begin(9600);
   Wire.begin();
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
-    Serial.println(" OLED NOT FOUND");
+    Serial.println("OLED not found");
     while (1);
   }
 
@@ -48,53 +47,60 @@ void setup() {
   display.println("Starting...");
   display.display();
 
-  // WiFi connect
+  /* WIFI */
   WiFi.begin(ssid, password);
   Serial.print("Connecting WiFi");
 
   unsigned long startTime = millis();
+
   while (WiFi.status() != WL_CONNECTED && millis() - startTime < 15000) {
     delay(500);
     Serial.print(".");
   }
 
   display.clearDisplay();
-  display.setCursor(0, 0);
 
   if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\n WiFi connected");
     display.println("WiFi OK");
     display.println(WiFi.localIP());
   } else {
-    Serial.println("\n WiFi FAILED");
     display.println("WiFi FAIL");
   }
 
   display.display();
 }
 
-/* ================= LOOP ================= */
+/* LOOP */
 void loop() {
+
   int rawValue = analogRead(sensorPin);
 
-  // Convert raw → cm (1 decimal)
-  float waterCM = map(rawValue, dryValue, wetValue,
-                      0, tankHeightCM * 10) / 10.0;
+  /* STEP 1: NORMALIZATION */
+  float N = (rawValue - Rdry) / (Rwet - Rdry);
 
-  // Safety clamp
-  waterCM = constrain(waterCM, 0, tankHeightCM);
+  if (N < 0) N = 0;
+  if (N > 1) N = 1;
 
-  // Determine state
+  /* STEP 2: SENSOR REGION */
+  float Lsensor = N * sensorLength;
+
+  /* STEP 3: ACTUAL WATER HEIGHT */
+  float waterCM = H_offset + Lsensor;
+
+  /* STATUS LOGIC */
   String state;
-  if (waterCM < SAFE_LEVEL) {
-    state = "SAFE";
-  } else if (waterCM < MID_LEVEL) {
-    state = "MID";
-  } else {
-    state = "HIGH";
+
+  if (rawValue <= Rdry + 20) {
+    state = "SAFE";        // no water touching sensor
+  }
+  else if (rawValue > Rdry + 20 && rawValue < Rwet - 20) {
+    state = "CAUTION";     // water touching sensor
+  }
+  else if (rawValue >= Rwet - 20) {
+    state = "FULL";        // near full
   }
 
-  /* ---------- OLED DISPLAY ---------- */
+  /* OLED DISPLAY */
   display.clearDisplay();
 
   display.setTextSize(1);
@@ -113,24 +119,32 @@ void loop() {
 
   display.display();
 
-  /* ---------- SERIAL DEBUG ---------- */
+  /* SERIAL LOG */
   Serial.print("Raw: ");
   Serial.print(rawValue);
+  Serial.print(" | N: ");
+  Serial.print(N);
+  Serial.print(" | Lsensor: ");
+  Serial.print(Lsensor);
   Serial.print(" | Water: ");
-  Serial.print(waterCM, 1);
+  Serial.print(waterCM);
   Serial.print(" cm | ");
   Serial.println(state);
 
-  /* ---------- SEND TO SERVER ---------- */
+  /* SEND TO SERVER */
   if (WiFi.status() == WL_CONNECTED) {
+
     WiFiClient client;
     HTTPClient http;
 
-    String url = String(serverURL) + "?cm=" + String(waterCM, 1);
+    String url = String(serverURL) +
+                 "?cm=" + String(waterCM, 1) +
+                 "&status=" + state;
+
     http.begin(client, url);
     http.GET();
     http.end();
   }
 
-  delay(1000); // update every 1 second
+  delay(1000);
 }
