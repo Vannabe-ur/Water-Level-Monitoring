@@ -13,8 +13,8 @@ if ($conn->connect_error) {
 
 // ================= GET DATA FROM ESP =================
 // Instead of checking only cm and status, we accept all expected inputs
-$cm = isset($_GET['cm']) ? floatval($_GET['cm']) : 0;
-$status = isset($_GET['status']) ? strtoupper($_GET['status']) : 'UNKNOWN';
+$cm = isset($_GET['cm']) ? floatval($_GET['cm']) : 94.0; // default to 94.0 if not provided
+$status = isset($_GET['status']) ? strtoupper($_GET['status']) : 'CAUTION'; // default to CAUTION if not provided
 
 // ================= REAL-TIME FILE =================
 file_put_contents("level.txt", "Water CM: $cm | Status: $status\n", FILE_APPEND);
