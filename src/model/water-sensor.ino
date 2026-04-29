@@ -48,7 +48,7 @@ const float H_offset = 94.0;   // tankHeight - TotalSensorLength = 100 - 6
 
 const char* ssid = "F206";
 const char* password = "11112222";
-const char* serverURL = "http://192.168.20.1/water/update.php";
+const char* serverURL = "http://192.168.20.195:6969/update.php";
 
 /**
  * Setup function ->
