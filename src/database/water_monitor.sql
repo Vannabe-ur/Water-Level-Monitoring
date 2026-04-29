@@ -1,6 +1,6 @@
-CREATE DATABASE water_monitor;
+CREATE DATABASE IF NOT EXISTS myapp;
 
-USE water_monitor;
+USE myapp;
 CREATE TABLE water_level (
 	id INT AUTO_INCREMENT PRIMARY KEY,
     water_cm FLOAT,
@@ -9,4 +9,4 @@ CREATE TABLE water_level (
 );
 
 
-SELECT * FROM water_level;
+SELECT * FROM water_level; 
