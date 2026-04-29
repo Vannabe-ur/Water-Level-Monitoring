@@ -1,10 +1,10 @@
 <?php
 // ================= DATABASE CONFIG =================
 $host = "localhost";
-$port = 3307;          
+$port = 5432;          
 $user = "root";
-$pass = "e20221650";
-$db   = "water_monitor";
+$pass = "root";
+$db   = "myapp";
 
 $conn = new mysqli($host, $user, $pass, $db, $port);
 if ($conn->connect_error) {
