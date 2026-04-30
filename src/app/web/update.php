@@ -32,11 +32,15 @@ $status = isset($_GET['status']) ? strtoupper($_GET['status']) : 'CAUTION';
  * Log to file
  */
 
-$log_file = __DIR__ . "src/app/level.txt";
+$log_file = __DIR__ . "/level.txt";
 $log_entry = "Water CM: $cm | Status: $status\n";
 
 if (file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX) === false) {
     error_log("Failed to write to log file: $log_file");
+    echo json_encode([
+        "error" => "LOG WRITE FAILED",
+        "message" => "Could not write to log file"
+    ]);
 }
 
 /**

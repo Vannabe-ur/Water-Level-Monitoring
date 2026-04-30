@@ -27,7 +27,7 @@ const float H_offset = 94.0;   // tankHeight - TotalSensorLength = 100 - 6
 /* WIFI CONFIG */
 const char* ssid = "F106";
 const char* password = "11112222";
-const char* serverURL = "http://192.168.20.195:6969/update.php";
+const char* serverURL = "http://192.168.21.20:6969/update.php";
 
 /* SETUP */
 void setup() {

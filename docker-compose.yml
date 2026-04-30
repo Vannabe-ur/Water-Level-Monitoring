@@ -7,7 +7,7 @@ services:
     ports:
       - "6969:80"
     volumes:
-      - ./src/app/web:/var/www/html
+      - ./src/app:/var/www/html
     depends_on:
       - db
 
