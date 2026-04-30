@@ -25,9 +25,9 @@ const float sensorLength = 4.0; // Sensing area of sensor (cm)
 const float H_offset = 94.0;   // tankHeight - TotalSensorLength = 100 - 6
 
 /* WIFI CONFIG */
-const char* ssid = "Shin Zo.";
-const char* password = "08072022";
-const char* serverURL = "http://10.193.25.36/water/update.php";
+const char* ssid = "F106";
+const char* password = "11112222";
+const char* serverURL = "http://192.168.21.20:6969/update.php";
 
 /* SETUP */
 void setup() {
