@@ -31,7 +31,8 @@ $status = isset($_GET['status']) ? strtoupper($_GET['status']) : 'CAUTION';
 /**
  * Log to file
  */
-$log_file = __DIR__ . "/level.txt";
+
+$log_file = __DIR__ . "src/app/level.txt";
 $log_entry = "Water CM: $cm | Status: $status\n";
 
 if (file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX) === false) {
@@ -41,6 +42,7 @@ if (file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX) === false) {
 /**
  * Insert into database
  */
+
 $stmt = $conn->prepare("INSERT INTO water_level (water_cm, status) VALUES (?, ?)");
 
 if (!$stmt) {
